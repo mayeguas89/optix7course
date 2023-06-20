@@ -17,45 +17,63 @@
 #pragma once
 
 #include "gdt/math/AffineSpace.h"
+
 #include <vector>
 
+
 /*! \namespace osc - Optix Siggraph Course */
-namespace osc {
-  using namespace gdt;
-  
-  /*! a simple indexed triangle mesh that our sample renderer will
+namespace osc
+{
+using namespace gdt;
+
+/*! a simple indexed triangle mesh that our sample renderer will
       render */
-  struct TriangleMesh {
-    std::vector<vec3f> vertex;
-    std::vector<vec3f> normal;
-    std::vector<vec2f> texcoord;
-    std::vector<vec3i> index;
+struct TriangleMesh
+{
+  /*! add a unit cube (subject to given xfm matrix) to the current
+        triangleMesh */
+  void addUnitCube(const affine3f& xfm);
 
-    // material data:
-    vec3f              diffuse;
-    int                diffuseTextureID { -1 };
-  };
+  //! add aligned cube aith front-lower-left corner and size
+  void addCube(const vec3f& center, const vec3f& size);
 
-  struct Texture {
-    ~Texture()
-    { if (pixel) delete[] pixel; }
-    
-    uint32_t *pixel      { nullptr };
-    vec2i     resolution { -1 };
-  };
-  
-  struct Model {
-    ~Model()
-    {
-      for (auto mesh : meshes) delete mesh;
-      for (auto texture : textures) delete texture;
-    }
-    
-    std::vector<TriangleMesh *> meshes;
-    std::vector<Texture *>      textures;
-    //! bounding box of all vertices in the model
-    box3f bounds;
-  };
+  std::vector<vec3f> vertex;
+  std::vector<vec3f> normal;
+  std::vector<vec2f> texcoord;
+  std::vector<vec3i> index;
 
-  Model *loadOBJ(const std::string &objFile);
+  // material data:
+  vec3f diffuse;
+  int diffuseTextureID{-1};
+};
+
+struct Texture
+{
+  ~Texture()
+  {
+    if (pixel)
+      delete[] pixel;
+  }
+
+  uint32_t* pixel{nullptr};
+  vec2i resolution{-1};
+};
+
+struct Model
+{
+  ~Model()
+  {
+    for (auto mesh: meshes)
+      delete mesh;
+    for (auto texture: textures)
+      delete texture;
+  }
+
+  std::vector<TriangleMesh*> meshes;
+  std::vector<Texture*> textures;
+  //! bounding box of all vertices in the model
+  box3f bounds;
+};
+
+Model* loadOBJ(const std::string& objFile);
 }
